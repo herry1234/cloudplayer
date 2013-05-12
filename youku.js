@@ -1,11 +1,15 @@
 
+var http = require('http'),util = require('util');
+var url = require('url'),fs=require('fs');
+
+
 //https://github.com/cscscheng/Raspberry-Pi-NetworkPlayer/blob/master/youku.py
 //http://userscripts.org/scripts/review/131926
 //http://stackoverflow.com/questions/1527803/generating-random-numbers-in-javascript-in-a-specific-range
 var request = require('request');
 
 //Provided by User
-var vid = "XNTQxOTIzMTcy";
+var vid = "XNTE0NDc4NzA4";
 var stream_t = "mp4";
 
 //
@@ -32,6 +36,9 @@ request(options, function (error, response, body) {
     var segs=data.segs[stream_t];
     var fileids = data.streamfileids[stream_t];
     getMediaUrls(fileids,data.seed,segs);
+   var downloader = require('./downloader.js');
+	downloader.setlist(urls.vList);
+	downloader.start();
   } else {
     console.log("ERR" + error);
    }
@@ -41,9 +48,11 @@ function getMediaUrls (fids,seed,segs) {
    var fullfids = getFileId(fids,seed);
    var sid = getsid();
    for(var i = 0; i< segs.length; i++) {
-      var video_part_num = segs[i]["no"];
+      var video_part_num = parseInt(segs[i]["no"]);
       var key = segs[i]["k"];
       var part_num_hex = ('0' + video_part_num.toString(16)).slice(-2);
+	  part_num_hex = part_num_hex.toUpperCase();
+	  console.log("video-par-num: " + video_part_num + "part_num_hex : " + part_num_hex);
       var converted_fid = fullfids.substring(0,8) + part_num_hex + fullfids.substring(10);
       var request_url = youku_f_link + sid + '_' + ('0' + video_part_num).slice(-2) + '/st/' + stream_t + '/fileid/' + converted_fid + '?K=' + key;
       console.log(request_url);
@@ -96,4 +105,5 @@ function getMixString(seed) {
    }
    return o;
 }
+
 
