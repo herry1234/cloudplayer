@@ -25,22 +25,22 @@ var urls = {
    vList : []
 };
 request(options, function (error, response, body) {
-  if (!error && response.statusCode == 200) {
-    console.log(body);
-    var res = JSON.parse(body);
-    var data = res.data[0];
-    console.log(data.seed);
-    console.log(data.title);
-    urls.vTitle = data.title;
-    console.log(data.videoid);
-    var segs=data.segs[stream_t];
-    var fileids = data.streamfileids[stream_t];
-    getMediaUrls(fileids,data.seed,segs);
-   var downloader = require('./downloader.js');
-	downloader.setlist(urls.vList);
-	downloader.start();
-  } else {
-    console.log("ERR" + error);
+   if (!error && response.statusCode == 200) {
+      console.log(body);
+      var res = JSON.parse(body);
+      var data = res.data[0];
+      console.log(data.seed);
+      console.log(data.title);
+      urls.vTitle = data.title;
+      console.log(data.videoid);
+      var segs=data.segs[stream_t];
+      var fileids = data.streamfileids[stream_t];
+      getMediaUrls(fileids,data.seed,segs);
+      var downloader = require('./downloader.js');
+      downloader.setlist(urls.vList);
+      downloader.start();
+   } else {
+      console.log("ERR" + error);
    }
 });
 
@@ -51,8 +51,8 @@ function getMediaUrls (fids,seed,segs) {
       var video_part_num = parseInt(segs[i]["no"]);
       var key = segs[i]["k"];
       var part_num_hex = ('0' + video_part_num.toString(16)).slice(-2);
-	  part_num_hex = part_num_hex.toUpperCase();
-	  console.log("video-par-num: " + video_part_num + "part_num_hex : " + part_num_hex);
+      part_num_hex = part_num_hex.toUpperCase();
+      console.log("video-part-num: " + video_part_num + "part_num_hex : " + part_num_hex);
       var converted_fid = fullfids.substring(0,8) + part_num_hex + fullfids.substring(10);
       var request_url = youku_f_link + sid + '_' + ('0' + video_part_num).slice(-2) + '/st/' + stream_t + '/fileid/' + converted_fid + '?K=' + key;
       console.log(request_url);
@@ -70,7 +70,7 @@ function getRandomInt(min, max) {
 }
 
 function getsid() {
-//var sid=new Date().getTime() + "" + (1000 + new Date().getMilliseconds()) + "" + (parseInt(Math.random() * 9000,10) + 1000);
+   //var sid=new Date().getTime() + "" + (1000 + new Date().getMilliseconds()) + "" + (parseInt(Math.random() * 9000,10) + 1000);
 
    var now = new Date().getTime();
    var r1 = getRandomInt(1000,1998);

@@ -1,23 +1,28 @@
-var http = require('http');
-var net = require('net');
+var http = require('http'),
+   fs = require('fs'),
+   url = require('url'); 
+
+
+var liveurl = 'http://tvhd.ak.live.cntv.cn/cache/1_/seg0/index.m3u8';
+//var liveurl = 'http://t.live.cntv.cn/m3u8/cctv-1.m3u8';
+var channelId = 'pa://cctv_p2p_hdcctv1';
+var html5_api = 'http://vdn.apps.cntv.cn/api/getLiveUrlHtml5Api.do?channel=' + channelId + '&type=ipad';
+
+
+var myagent='Mozilla/5.0 (iPad; U; CPU OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B334b Safari/531.21.10';
 var options = {
-   host: 't.live.cntv.cn',
+   host: 'vdn.apps.cntv.cn',
    port: 80,
-   path: '/m3u8/cctv-news.m3u8',
-   dir: '',
+   path: '/api/getLiveUrlHtml5Api.do?channel=' + channelId + '&type=ipad',
+   headers: {'user-agent': myagent},
    method: 'GET'
 };
-var pids = new Array();
+var pids = [];
+// Download ts file one by one. So Agent is introduced. 
 var myAgent = new http.Agent({maxSockets: 1});
-// var options = {
-//   host: '173.36.255.148',
-//   port: 80,
-//   path: '/live/ch1.isml/Manifest(format=m3u8-aapl).m3u8',
-//   dir: '',
-//   method: 'GET'
-// };
-//HTTP data body call back
-m3u8_parser = function (chunk) {
+var myM3U8Host = '';
+//Parsing the m3u8 file to get the list of ts file. 
+var m3u8_parser = function (chunk) {
 
    console.log('BODY: ' + chunk);
    var buffer = [];
@@ -60,9 +65,10 @@ m3u8_parser = function (chunk) {
    //The initial minimum reload delay is the duration of the last media
    //   segment in the Playlist.  Media segment duration is specified by the
    //   EXTINF tag.
-   var segments = new Array();
+   var segments = [];
    var last_duration = 10;
    var cur_seq = 0;
+   var pid_bw = null;
    for ( var i=0;i<lines.length; i++ ) {
       //console.log('M3U8 file line [' + lines[i] );
       var line_str = lines[i].replace(/^\s+|\s+$/g, '');
@@ -70,14 +76,14 @@ m3u8_parser = function (chunk) {
          console.log('Got firstline of M3U8');
          isM3U8 = true;
       }
-      var pid_bw = patten1.exec(line_str);
+      pid_bw = patten1.exec(line_str);
       var maxduration = patten2.exec(line_str);
       var inf = patten3.exec(line_str);
       var seq = patten4.exec(line_str);
       //pid_bw[0] is the whole matched string
       if(pid_bw != null) {
          console.log('Show pid and bandwith: ' + pid_bw[1] + ' : ' + pid_bw[2]);
-         var pid = new Object();
+         var pid = {};
          pid.id = pid_bw[1];
          pid.bw = pid_bw[2];
          pid.pl = lines[i+1];
@@ -97,8 +103,10 @@ m3u8_parser = function (chunk) {
       }
 
    };
+   if(!pid_bw) pids.push({});
    if(segments.length > 0) {
       //TODO: always pick up the first bw
+      console.log("DEBUG");
       pids[0].segments = segments;
    }
 };
@@ -110,19 +118,7 @@ var router = {
    "application/x-mpegurl":"get_ts_file",
 };
    
-cb_m3u8 = function(res) {
-   show_http_header(res);
-   var type = res.headers['content-type']; 
-   res.on('data',m3u8_parser);
-   res.on('end', function() {
-      if(type === "audio/x-mpegurl") {
-         get_playlist();
-      } else {
-         get_ts_file();
-      };
-      console.log('End of response HTTP1');
-   });
-   res.on('close',function () { console.log('close');});
+var cb_m3u8 = function(res) {
 };
 function show_http_header (res) {
    console.log('STATUS: ' + res.statusCode);
@@ -133,65 +129,69 @@ function show_http_header (res) {
    };
 
 }
-fs = require('fs');
-var index_ts_files = 0;
-cb_ts = function(res) {
-   show_http_header(res);
-   index_ts_files ++;
-   res.on('data',save_ts_data);
-   res.on('end', function () { 
-      console.log('End of TS file download'); 
-   });
-   res.on('close',function () { console.log('close');});
-};
-save_ts_data = function(chunk) {
-   console.log('Receiving data length '+ chunk.length);
-   //var buffer = [];
-   //var bodyLen = 0;
-   //buffer.push(chunk);
-   //bodyLen += chunk.length;
-   var filename = index_ts_files + '.ts';
+var write_ts = function(fname,chunk) {
+   //console.log('Receiving data length '+ chunk.length);
+   var filename = '' + fname + '.ts';
    var fd = fs.openSync(filename,'a+');
    fs.writeSync(fd,chunk,0,chunk.length,0);
    fs.closeSync(fd);
-
-   //ws = fs.createWriteStream(index_ts_files+'.ts');
-   //ws.write(chunk);
-
 }
-var req = http.request(options, cb_m3u8);
+var req = http.request(options, function(res) {
+   show_http_header(res);
+   var type = res.headers['content-type']; 
+   res.on('data',function(data) {
+      console.log(data.toString());
+      function getHtml5VideoData(data) {};
+      eval(data.toString());
+      //now we have var html5VideoData;
+      var M3U8Url = JSON.parse(html5VideoData).ipad;
+      get_playlist(M3U8Url);
+
+   });
+   res.on('close',function () { console.log('close');});
+    
+
+});
 req.on('error', function(e) {
    console.log('problem with request: ' + e.message);
 });
 req.end();
 
-get_playlist = function() {
+var get_playlist = function(m3u8url) {
    //choose one bandwitdh
-   var url = require('url'); 
-   var options2 = url.parse(pids[0].pl);
-   console.log(pids[0].pl);
-   options2.method = 'GET';
-   if(!options2.host) {
-      options2.host = options.host;
-      var path = options.path.split('/');
-      var dir = '';
-      for(var i = 1; i < path.length-1;i++ ) {
-         dir += '/' + path[i];
-      }
-      if (options2.path.split('/')[0] != '') {
-          dir = dir + '/' + options2.path.split('/')[0];
-          options2.path = dir + '/'+ options2.path.split('/')[1];
-      } else {
-          options2.path = dir + '/' + options2.path;
-      }
-      options.dir = dir;
+   var options2 = url.parse(m3u8url);
+   var options = {};
+   myM3U8Host = options.host = options2.host;
+   options.method = 'GET';
+   options.path = options2.path;
+   options.agent = myAgent;
+   //var dir = '';
+   //for(var i = 1; i < path.length-1;i++ ) {
+   //   dir += '/' + path[i];
+   //}
+   //if (options2.path.split('/')[0] != '') {
+   //    dir = dir + '/' + options2.path.split('/')[0];
+   //    options2.path = dir + '/'+ options2.path.split('/')[1];
+   //} else {
+   //    options2.path = dir + '/' + options2.path;
+   //}
+   //options.dir = dir;
       
-   }
-   console.log('dump options: host ' + options2.host +' path: ' + options2.path + ' method: ' + options2.method);
-   pids[0].host = options2.host;
-   options2.agent = myAgent;
+   console.log('dump options: host ' + options.host +' path: ' + options.path + ' method: ' + options.method);
    console.log('Requesting m3u8 list');
-   var req2 = http.request(options2,cb_m3u8);
+   var req2 = http.request(options,function(res) {
+      show_http_header(res);
+      var type = res.headers['content-type']; 
+      res.on('data',m3u8_parser);
+      res.on('end', function() {
+         if(type === "application/x-mpegURL") {
+            get_ts_file();
+         } else {
+            console.log("NOT expected res from server");
+         };
+      });
+      res.on('close',function () { console.log('close');});
+   });
    req2.on('error', function(e) {
       console.log('problem with request1: ' + e.message);
    });
@@ -199,20 +199,27 @@ get_playlist = function() {
 };
 
 
-get_ts_file = function() {
+var get_ts_file = function() {
+   var fname = "cctv1";
 
    //choose one media uri according with bandwitdh
-   var url = require('url'); 
    for (var i=0; i< pids[0].segments.length; i++) {
-      var options2 = url.parse(pids[0].segments[i]);
-      console.log(options2.path);
+      var options2 ={};
+      options2.path =  pids[0].segments[i];
       options2.method = 'GET';
-      options2.host = pids[0].host;
+      options2.host = myM3U8Host;
       options2.agent = myAgent;
-      options2.path = options.dir + '/' + options2.path;
       console.log('dump options: host ' + options2.host +' path: ' + options2.path + ' method: ' + options2.method);
       console.log('Requesting Ts file list');
-      var req2 = http.request(options2,cb_ts);
+      var req2 = http.request(options2,function(res) {
+         res.on('data',function(data){
+               write_ts(fname,data);
+         });
+         res.on('end', function () { 
+            console.log('End of TS file download'); 
+         });
+         res.on('close',function () { console.log('close');});
+      });
       req2.on('error', function(e) {
          console.log('problem with request2: ' + e.message);
       });
