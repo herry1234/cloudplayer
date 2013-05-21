@@ -35,21 +35,30 @@ function gunzipHtml(res) {
 		console.log(vids[1]);
 		var vid_list = vids[1].split(',');
 		for (var i = 0; i < vid_list.length; i++) {
-			//download one
-			getOne(vid_list[i]);
-		};
+                        console.log(vid_list[i]);
+                };
+	        //download one each time
+                async.eachLimit(vid_list, 1, getOne,function (err) {
+                   if (err)
+                      console.log(err);
+                   console.log("Done");
+                });
+               
 
 	});
 	res.pipe(gunzip);
 
-}
+};
 
 gunzipHtml(res);
 
-function getOne(vid) {
+function getOne(vid,callback) {
 
-	sohu.config({
+	sohu.init({
 		vid : vid
-	});
-	sohu.go();
+        });
+        sohu.go(function() {
+           callback();
+        }
+      );
 }
