@@ -1,4 +1,5 @@
-var querystring = require('querystring'),request = require('request');
+var querystring = require('querystring'),
+  request = require('request');
 
 //Provided by User
 //var vid = "4c239fe260524abaa20999f866441ee5";
@@ -18,57 +19,63 @@ var bid = "2";
 //
 var url = 'http://cache.video.qiyi.com/m/' + vid + '/';
 var options = {
-   url : url,
+  url: url,
 };
 
 var urls = {
-   vTitle : "",
-   vList : []
+  vTitle: "",
+  vList: []
 };
-request(options, function (error, response, body) {
+request(options, function(error, response, body) {
   if (!error && response.statusCode == 200) {
-    
+
     eval(body);
-    console.log(JSON.stringify(ipadUrl,null,2));
+    console.log(JSON.stringify(ipadUrl, null, 2));
     var oriM3uUrl = ipadUrl.data.url;
     var oriMp4Url = ipadUrl.data.mp4Url;
     console.log(oriMp4Url);
     console.log(oriM3uUrl);
     //getRealUrl({type:"m3u8",url:oriM3uUrl});
-    getRealUrl({type:"mp4",url:oriMp4Url});
+    getRealUrl({
+      type: "mp4",
+      url: oriMp4Url
+    });
   } else {
     console.log("ERR" + error);
-   }
+  }
 });
 
-function getMediaUrls (oriUrl) {
+function getMediaUrls(oriUrl) {
 
 }
 
 function getRealUrl(data) {
-      var url = data.url;
-      console.log(url);
-      request({url: url}, function (error, response, body) {
-         if (!error && response.statusCode ==200) {
-            if(data.type == "mp4") { 
-               qiyi_m_parse_mp4(body);
-            } else {
-               qiyi_m_parse_m3u(body);
-            }
-         } else {
-               console.log(response.statusCode);
-         }
-         
-      });
+  var url = data.url;
+  console.log(url);
+  request({
+    url: url
+  }, function(error, response, body) {
+    if (!error && response.statusCode == 200) {
+      if (data.type == "mp4") {
+        qiyi_m_parse_mp4(body);
+      } else {
+        qiyi_m_parse_m3u(body);
+      }
+    } else {
+      console.log(response.statusCode);
+    }
+
+  });
 
 }
 
-function qiyi_m_parse_mp4 (data) {
+function qiyi_m_parse_mp4(data) {
 
-   eval(data);
-   console.log(videoUrl.data.l);
+  eval(data);
+  console.log(videoUrl.data.l);
 }
-function qiyi_m_parse_m3u (data) {
 
-   console.log(data);
+function qiyi_m_parse_m3u(data) {
+
+  console.log(data);
 }
