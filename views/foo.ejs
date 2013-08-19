@@ -1,0 +1,25 @@
+<html>
+   <head>
+      <link href="http://vjs.zencdn.net/4.1/video-js.css" rel="stylesheet">
+      <script src="http://vjs.zencdn.net/4.1/video.js"></script>
+      <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+      <script type="text/javascript" src="../player.js"></script>
+   </head>
+   <body onload="load()">
+      <video id="my_video" class="video-js vjs-default-skin" controls autoplay
+      preload="auto" width="800" height="600" poster="../public/my_video_poster.png"
+      data-setup="{}">
+         <source src="<%= data[0]%>" type='video/mp4'>
+      </video>
+      <ul id="vlist">
+      <% for(var i = 0; i< data.length;i++) { %>
+         <li>
+         <%= data[i] %>
+         </li>
+      <% } %> 
+      </ul>
+      
+   </body>
+</html>
+
+

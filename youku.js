@@ -1,67 +1,88 @@
 var http = require('http'),
-   util = require('util');
-var url = require('url'),
-   fs = require('fs');
-
+   util = require('util'),
+   url = require('url'),
+   fs = require('fs'),
+   request = require('request');
 
 //https://github.com/cscscheng/Raspberry-Pi-NetworkPlayer/blob/master/youku.py
 //http://userscripts.org/scripts/review/131926
 //http://stackoverflow.com/questions/1527803/generating-random-numbers-in-javascript-in-a-specific-range
-var request = require('request');
-
 //Provided by User
-var vid = "XNTE0NDc4NzA4";
-var stream_t = "mp4";
 
-//
-var youku_f_link = "http://f.youku.com/player/getFlvPath/sid/";
-var url = "http://v.youku.com/player/getPlayList/VideoIDS/" + vid + "/timezone/+08/version/5/source/video?n=3&ran=5061&password="
-var options = {
-   url: url,
-   proxy: 'http://222.197.188.39:8080'
-};
+var Youku = {
 
-var urls = {
-   vTitle: "",
-   vList: []
-};
-request(options, function(error, response, body) {
-   if (!error && response.statusCode == 200) {
-      console.log(body);
-      var res = JSON.parse(body);
-      var data = res.data[0];
-      console.log(data.seed);
-      console.log(data.title);
-      urls.vTitle = data.title;
-      console.log(data.videoid);
-      var segs = data.segs[stream_t];
-      var fileids = data.streamfileids[stream_t];
-      getMediaUrls(fileids, data.seed, segs);
-      var downloader = require('./downloader.js');
-      downloader.setlist(urls.vList);
-      downloader.start();
-   } else {
-      console.log("ERR" + error);
+   vid: "XNTcxOTY5Mzg0",
+   stream_t: "mp4",
+   youku_f_link : "http://f.youku.com/player/getFlvPath/sid/",
+   urls: {
+      vTitle: "",
+      vList: []
+   },
+   fetchUrl: function(cb) {
+      //
+      //var youku_f_link = "http://f.youku.com/player/getFlvPath/sid/";
+      var url = "http://v.youku.com/player/getPlayList/VideoIDS/" + this.vid + "/timezone/+08/version/5/source/video?n=3&ran=5061&password="
+      var options = {
+         url: url,
+         proxy: 'http://121.199.60.143:3128'
+      };
+      var myself = this;
+      request(options, function(error, response, body) {
+         if (!error && response.statusCode == 200) {
+            var res = JSON.parse(body);
+            var data = res.data[0];
+            console.dir(data);
+            myself.urls.vTitle = data.title;
+            //console.log(data.videoid);
+            var segs = data.segs[myself.stream_t];
+            var fileids = data.streamfileids[myself.stream_t];
+            myself.getMediaUrls(fileids, data.seed, segs);
+            // var downloader = require('./downloader.js');
+            // downloader.setlist(urls.vList);
+            // downloader.start();
+            cb();
+         } else {
+            console.log("ERR: " + error);
+            cb();
+         }
+      });
+   },
+
+   getMediaUrls: function(fids, seed, segs) {
+      var fullfids = getFileId(fids, seed);
+      var sid = getsid();
+      for (var i = 0; i < segs.length; i++) {
+         var video_part_num = parseInt(segs[i]["no"]);
+         var key = segs[i]["k"];
+         var part_num_hex = ('0' + video_part_num.toString(16)).slice(-2);
+         part_num_hex = part_num_hex.toUpperCase();
+         console.log("video-part-num: " + video_part_num + " part_num_hex : " + part_num_hex);
+         var converted_fid = fullfids.substring(0, 8) + part_num_hex + fullfids.substring(10);
+         var request_url = this.youku_f_link + sid + '_' + ('0' + video_part_num).slice(-2) + '/st/' + this.stream_t + '/fileid/' + converted_fid + '?K=' + key;
+         console.log(request_url);
+         this.urls.vList.push(request_url);
+      }
+   },
+   foo: function(req, res, next) {
+      Youku.fetchUrl(function() {
+         var v = {
+            type: "foo",
+            source: req.url.split('/')[2]
+         };
+         v.data = Youku.urls.vList;
+         req.video = v;
+         console.dir(req.video);
+         next();
+
+      });
+      console.log("----");
+      console.log(req.url);
+
+
    }
-});
 
-function getMediaUrls(fids, seed, segs) {
-   var fullfids = getFileId(fids, seed);
-   var sid = getsid();
-   for (var i = 0; i < segs.length; i++) {
-      var video_part_num = parseInt(segs[i]["no"]);
-      var key = segs[i]["k"];
-      var part_num_hex = ('0' + video_part_num.toString(16)).slice(-2);
-      part_num_hex = part_num_hex.toUpperCase();
-      console.log("video-part-num: " + video_part_num + "part_num_hex : " + part_num_hex);
-      var converted_fid = fullfids.substring(0, 8) + part_num_hex + fullfids.substring(10);
-      var request_url = youku_f_link + sid + '_' + ('0' + video_part_num).slice(-2) + '/st/' + stream_t + '/fileid/' + converted_fid + '?K=' + key;
-      console.log(request_url);
-      urls.vList.push(request_url);
-   }
-}
-
-
+};
+module.exports = Youku;
 
 function oetRandom(min, max) {
    return Math.random() * (max - min) + min;

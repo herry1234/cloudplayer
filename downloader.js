@@ -1,10 +1,9 @@
 var util = require('util'),
-	http = require('follow-redirects').http;
-var URL = require('url'),
+	http = require('follow-redirects').http,
+	URL = require('url'),
 	fs = require('fs'),
-	qs = require('querystring');
-
-var async = require('async');
+	qs = require('querystring'),
+	async = require('async');
 
 var media_file_list = [];
 var setMediaList = function(list) {
@@ -18,7 +17,7 @@ var items = [];
 function _change(list) {
 	for (var i = 0; i < list.length; i++) {
 		var filename = i.toString() + '.mp4';
-		fs.appendFileSync("mylist.txt", "file " + "'" + filename + "'" + "\r\n", null);
+		//fs.appendFileSync("mylist.txt", "file " + "'" + filename + "'" + "\r\n", null);
 		items.push({
 			url: list[i],
 			fname: filename
