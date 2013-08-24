@@ -18,6 +18,11 @@ var Youku = {
       vTitle: "",
       vList: []
    },
+   init : function(vid,type) {
+      this.vid = vid;
+      this.stream_t = type;
+      return this;
+   },
    fetchUrl: function(cb) {
       //
       //var youku_f_link = "http://f.youku.com/player/getFlvPath/sid/";
@@ -40,10 +45,10 @@ var Youku = {
             // var downloader = require('./downloader.js');
             // downloader.setlist(urls.vList);
             // downloader.start();
-            cb();
+            cb(null,myself.urls);
          } else {
             console.log("ERR: " + error);
-            cb();
+            cb(error);
          }
       });
    },

@@ -1,0 +1,46 @@
+<html>
+   <head>
+      <meta charset="utf-8">
+      <title> New Video </title>
+      <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+   </head>
+   <body>
+      
+      <form action="/video/add" id="newVideoForm">
+         <input type="text" name="vid" />
+         <input type="text" name="type" />
+         <input type="submit" value="go" />
+      </form>
+      <script>
+            /* attach a submit handler to the form */
+            $("#newVideoForm").submit(function(event) {
+             
+              /* stop form from submitting normally */
+              event.preventDefault();
+             
+              /* get some values from elements on the page: */
+              var $form = $( this ),
+                  vid = $form.find( 'input[name="vid"]' ).val(),
+                  vt = $form.find( 'input[name="type"]' ).val(),
+                  url = $form.attr( 'action' );
+             
+              /* Send the data using post */
+              var posting = $.ajax({
+                type : "POST",
+                'url': url,
+                'contentType' : 'application/json', 
+
+                data: JSON.stringify({ vid: vid, type: vt }) 
+              });
+             
+              /* Put the results in a div */
+              posting.done(function( data ) {
+               console.log("Submitted");
+              });
+            });
+         </script>
+      
+   </body>
+</html>
+
+
