@@ -53,6 +53,8 @@ app.post('/video/add*', function(req, res) {
     res.send("NO Good");
     return;
   };
+  console.log(req.param('vid'));
+  console.log(req.param('type'));
   youku.init(req.param('vid'), req.param('type')).fetchUrl(function(err, data) {
     if (err) {
       console.err('error');
@@ -98,5 +100,5 @@ app.delete('/youku/:id', function(req, res) {
     }
   })
 });
-var videoProvider = new VideoProvider('localhost', 27017);
+var videoProvider = new VideoProvider(process.env.MONGO_TV_HOST, process.env.MONGO_TV_PORT);
 app.listen(port, host);

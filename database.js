@@ -7,12 +7,22 @@ var mongo = require('mongodb'),
   ObjectID = mongo.ObjectID; //?
 
 var VideoProvider = function(host, port) {
-  this.db = new Db('cloudtv', new Server(host, port, {
+  var myself = this;
+  this.db = new Db(process.env.MONGO_TV_DB, new Server(host, port, {
     safe: false
   }, {
     auto_reconnect: true
   }, {}));
-  this.db.open(function() {});
+  this.db.open(function(err,database) {
+    	if (!err) {
+		console.log("db  opened !");
+		database.authenticate(process.env.MONGO_TV_USER, process.env.MONGO_TV_PSW, function(authErr, success) {
+			if (!authErr) {
+				myself.db = database;
+			}
+		});
+	};
+  });
 };
 
 

@@ -29,7 +29,8 @@ var Youku = {
       var url = "http://v.youku.com/player/getPlayList/VideoIDS/" + this.vid + "/timezone/+08/version/5/source/video?n=3&ran=5061&password="
       var options = {
          url: url,
-         proxy: 'http://121.199.60.143:3128'
+         //proxy: 'http://121.199.60.143:3128'
+        proxy: 'http://58.252.56.148:9000'
       };
       var myself = this;
       request(options, function(error, response, body) {
@@ -38,6 +39,7 @@ var Youku = {
             var data = res.data[0];
             console.dir(data);
             myself.urls.vTitle = data.title;
+            myself.urls.vList = [];
             //console.log(data.videoid);
             var segs = data.segs[myself.stream_t];
             var fileids = data.streamfileids[myself.stream_t];
