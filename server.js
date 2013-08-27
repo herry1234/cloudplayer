@@ -50,7 +50,7 @@ app.post('/video/add*', function(req, res) {
   console.dir(req.body);
   if(req.param('type') != "mp4") {
     console.log(req.param('type'));
-    res.send("NO Good");
+    res.send("Only MP4 supported now");
     return;
   };
   console.log(req.param('vid'));
@@ -60,12 +60,8 @@ app.post('/video/add*', function(req, res) {
       console.err('error');
       res.send("ERR");
     } else {
-      videoProvider.add({
-        title: data.vTitle,
-        name: data.vTitle,
-        data: data.vList
-      }, function(error, docs) {
-        res.render('player', docs[0]);
+      videoProvider.add(data, function(error, docs) {
+        res.send(docs[0]);
       });
 
     }

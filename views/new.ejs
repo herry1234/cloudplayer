@@ -7,10 +7,84 @@
    <body>
       
       <form action="/video/add" id="newVideoForm">
-         <input type="text" name="vid" />
-         <input type="text" name="type" />
-         <input type="submit" value="go" />
+
+        <fieldset>
+            <br/>
+
+            <div class="row">
+                <div class="span8">
+
+                    <div class="control-group">
+                        <label for="id" class="control-label">Youku Vid:</label>
+
+                        <div class="controls">
+                            <input type="text" name="vid" />
+                            <span class="help-inline"></span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="type" class="control-label">Type:</label>
+
+                        <div class="controls">
+                            <input type="text" id="type" name="type" value="mp4"/>
+                            <span class="help-inline"></span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="country" class="control-label">Country:</label>
+
+                        <div class="controls">
+                            <input type="text" id="country" name="country" value="China"/>
+                            <span class="help-inline"></span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="language" class="control-label">Languages:</label>
+
+                        <div class="controls">
+                            <input type="text" id="region" name="language" value="Chinese"/>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="year" class="control-label">Year:</label>
+
+                        <div class="controls">
+                            <select class="input-small" id="year" name="year" value="2013">
+                                <option
+                                selected >2012</option>
+                                <option
+                                >2011</option>
+                                <option
+                                >2010</option>
+                                <option
+                                >2009</option>
+                                <option
+                                >2008</option>
+                                <option
+                                >2007</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label for="submit" class="control-label">Go:</label>
+
+                        <div class="controls">
+                           <input type="submit" value="Go" />
+                        </div>
+                    </div> 
+
+                </div>
+
+            </div>
+
+        </fieldset>
+
       </form>
+      <div id="status">new</div>
       <script>
             /* attach a submit handler to the form */
             $("#newVideoForm").submit(function(event) {
@@ -36,6 +110,8 @@
               /* Put the results in a div */
               posting.done(function( data ) {
                console.log("Submitted");
+               var player = $('<a>',{text: 'open player',href: "/youku/"+data._id});
+               $( "#status" ).empty().append( player );
               });
             });
          </script>

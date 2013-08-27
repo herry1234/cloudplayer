@@ -6,20 +6,29 @@
       <script type="text/javascript" src="../player.js"></script>
    </head>
    <body onload="load()">
-      <h3><%= title %> </h3>
-      <p><%= name %> </p>
+      <h3><%= vTitle %> </h3>
+      <p><%= vIdEncoded %> </p>
       <video id="my_video" class="video-js vjs-default-skin" controls autoplay
       preload="auto" width="800" height="600" poster="../public/my_video_poster.png"
       data-setup="{}">
-         <source src="<%= data[0]%>" type='video/mp4'>
+         <source src="<%= vList[0]%>" type='video/mp4'>
       </video>
       <ul id="vlist">
-      <% for(var i = 0; i< data.length;i++) { %>
+      <% for(var i = 0; i< vList.length;i++) { %>
          <li>
-         <%= data[i] %>
+         <%= vList[i] %>
          </li>
       <% } %> 
       </ul>
+      <ul id="Tvlist">
+      <% for(var i = 0; i< vTvList.length;i++) { %>
+         <li>
+         <%= vTvList[i].title %>
+         <%= vTvList[i].vidEncoded %>
+         </li>
+      <% } %> 
+      </ul>
+
       
    </body>
 </html>
