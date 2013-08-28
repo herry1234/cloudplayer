@@ -3,7 +3,7 @@ var http = require('http'),
    url = require('url'),
    fs = require('fs'),
    request = require('request');
-
+var sogou = require('./proxy');
 //https://github.com/cscscheng/Raspberry-Pi-NetworkPlayer/blob/master/youku.py
 //http://userscripts.org/scripts/review/131926
 //http://stackoverflow.com/questions/1527803/generating-random-numbers-in-javascript-in-a-specific-range
@@ -21,13 +21,22 @@ var Youku = {
       return this;
    },
    fetchUrl: function(cb) {
-      //
+      //https://github.com/zhuzhuor/Unblock-Youku/blob/master/server/server.js
       //var youku_f_link = "http://f.youku.com/player/getFlvPath/sid/";
-      var url = "http://v.youku.com/player/getPlayList/VideoIDS/" + this.vid + "/timezone/+08/version/5/source/video?n=3&ran=5061&password="
+      var requrl = "http://v.youku.com/player/getPlayList/VideoIDS/" + this.vid + "/timezone/+08/version/5/source/video?n=3&ran=5061&password=";
+      var timestamp = Math.round(Date.now() / 1000).toString(16);
+      var sogou_headers = {};
+      sogou_headers['X-Sogou-Auth'] = sogou.new_sogou_auth_str();;
+      sogou_headers['X-Sogou-Timestamp'] = timestamp;
+      sogou_headers['X-Sogou-Tag'] = sogou.compute_sogou_tag(timestamp, url.parse(requrl).hostname);;
+      sogou_headers['X-Forwarded-For'] = sogou.new_random_ip();
+      sogou_headers.Host = url.parse(requrl).host;
+
+      console.dir(sogou_headers);
       var options = {
-         url: url,
-         //proxy: 'http://121.199.60.143:3128'
-         //proxy: 'http://58.252.56.148:9000'
+         url: requrl,
+         proxy: sogou.new_sogou_proxy_addr(),
+         headers: sogou_headers
       };
       var myself = this;
       request(options, function(error, response, body) {
