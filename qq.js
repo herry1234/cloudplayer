@@ -1,18 +1,21 @@
 var querystring = require('querystring'),
+  url = require('url'),
   request = require('request');
+var sogou = require('./proxy');
 
 //Provided by User
 var vid = "t00124j130x";
 var plid = "";
 var webUrl = "";
 var stream_t = "mp4";
-var cn_proxy = 'http://60.5.187.109:3128';
-
 //
-var url = 'http://vv.video.qq.com/geturl?otype=json&vid=' + vid;
+var requrl = 'http://vv.video.qq.com/geturl?otype=json&vid=' + vid;
+var p_headers = sogou.new_sogou_proxy_headers(url.parse(requrl).hostname, url.parse(requrl).host);
+console.dir(p_headers);
 var options = {
-  url: url,
-  proxy: cn_proxy
+    url: requrl,
+    proxy: sogou.new_sogou_proxy_addr(),
+    headers: p_headers
 };
 
 var urls = {
@@ -28,7 +31,7 @@ request(options, function(error, response, body) {
     console.log(data.url);
     getMediaUrls(data.url);
   } else {
-    console.log("ERR" + error);
+    console.log("ERR " + error);
   }
 });
 

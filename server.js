@@ -12,11 +12,6 @@ app.configure(function() {
   //parsing the post body to object.
   app.use(express.bodyParser());
   app.use(app.router); //use both root and other routes below
-  //Middleware
-  //this middle ware moved to get() to avoid global useage. 
-  // app.use(foo({
-  //   footest: "test"
-  // }));
 });
 
 app.get("/", function(req, res) { //root dir
@@ -35,27 +30,20 @@ app.get('/video/new', function(req, res) {
   })
 });
 
-// app.post('/video/new', function(req, res) {
-//   videoProvider.add({
-//     title: req.param('title'),
-//     name: req.param('name'),
-//     data: req.param('vlist')
-//   }, function(error, docs) {
-//     res.redirect('/')
-//   });
-// });
-
 app.post('/video/add*', function(req, res) {
   console.log("posting");
   console.dir(req.body);
-  if(req.param('type') != "mp4") {
+  if (req.param('type') != "mp4") {
     console.log(req.param('type'));
     res.send("Only MP4 supported now");
     return;
   };
   console.log(req.param('vid'));
   console.log(req.param('type'));
-  youku.init(req.param('vid'), req.param('type')).fetchUrl(function(err, data) {
+  youku.fetchUrl({
+    vid: req.param('vid'),
+    vtype: req.param('type')
+  }, function(err, data) {
     if (err) {
       console.err('error');
       res.send("ERR");
@@ -69,12 +57,6 @@ app.post('/video/add*', function(req, res) {
   })
 
 });
-// app.get('/youku/:id', youku.foo, function(req, res) {
-//   var data = req.video;
-//   console.dir(data);
-//   //data.layout = false; 
-//   res.render(data.type, data);
-// });
 app.get('/youku/:id', function(req, res) {
   console.log("request id ", req.param("id"));
   videoProvider.findById(req.param('id'), function(err, v) {
@@ -86,13 +68,41 @@ app.get('/youku/:id', function(req, res) {
     }
   });
 });
+app.put('/youku/:id', function(req, res) {
+  console.log("request id ", req.param("id"));
+  if (req.param('type') != "mp4") {
+    console.log(req.param('type'));
+    res.send("Only MP4 supported now");
+    return;
+  };
+  youku.fetchUrl({
+    vid: req.param('vid'),
+    vtype: "mp4"
+  }, function(err, data) {
+    if (err) {
+      console.err('error');
+      res.send("ERR");
+    } else {
+      videoProvider.update(req.param('id'), data,function(err, v) {
+        if (err) {
+          console.err(err);
+        } else {
+          console.dir(v);
+          res.render('player', v);
+        }
+      });
+    }
+
+  })
+
+});
 app.delete('/youku/:id', function(req, res) {
   videoProvider.delete(req.param('id'), function(err, data) {
     if (err) {
       console.error("Error on del");
     } else {
       console.dir(data);
-      res.redirect('/youku/');
+      res.redirect('/');
     }
   })
 });

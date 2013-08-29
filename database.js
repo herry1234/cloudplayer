@@ -13,15 +13,15 @@ var VideoProvider = function(host, port) {
   }, {
     auto_reconnect: true
   }, {}));
-  this.db.open(function(err,database) {
-    	if (!err) {
-		console.log("db  opened !");
-		database.authenticate(process.env.MONGO_TV_USER, process.env.MONGO_TV_PSW, function(authErr, success) {
-			if (!authErr) {
-				myself.db = database;
-			}
-		});
-	};
+  this.db.open(function(err, database) {
+    if (!err) {
+      console.log("db  opened !");
+      database.authenticate(process.env.MONGO_TV_USER, process.env.MONGO_TV_PSW, function(authErr, success) {
+        if (!authErr) {
+          myself.db = database;
+        }
+      });
+    };
   });
 };
 
@@ -57,6 +57,9 @@ VideoProvider.prototype.findById = function(id, callback) {
         '_id': new BSON.ObjectID(id)
         //'_id': video_collection.db.bson_serializer.ObjectID.createFromHexString(id)
       }, function(err, item) {
+        if(!item.vType) {
+          item.vType = "mp4";
+        }
 
         if (err) {
           console.err(err);

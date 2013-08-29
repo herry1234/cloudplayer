@@ -10,34 +10,28 @@ var sogou = require('./proxy');
 //Provided by User
 
 var Youku = {
-
-   vid: undefined,
-   stream_t: undefined,
-
-
-   init: function(vid, type) {
-      this.vid = vid;
-      this.stream_t = type;
-      return this;
-   },
-   fetchUrl: function(cb) {
+   // init: function(vid, type) {
+   //    this.vid = vid;
+   //    this.stream_t = type;
+   //    return this;
+   // },
+   fetchUrl: function(input,cb) {
       //https://github.com/zhuzhuor/Unblock-Youku/blob/master/server/server.js
       //var youku_f_link = "http://f.youku.com/player/getFlvPath/sid/";
-      var requrl = "http://v.youku.com/player/getPlayList/VideoIDS/" + this.vid + "/timezone/+08/version/5/source/video?n=3&ran=5061&password=";
-      var timestamp = Math.round(Date.now() / 1000).toString(16);
-      var sogou_headers = {};
-      sogou_headers['X-Sogou-Auth'] = sogou.new_sogou_auth_str();;
-      sogou_headers['X-Sogou-Timestamp'] = timestamp;
-      sogou_headers['X-Sogou-Tag'] = sogou.compute_sogou_tag(timestamp, url.parse(requrl).hostname);;
-      sogou_headers['X-Forwarded-For'] = sogou.new_random_ip();
-      sogou_headers.Host = url.parse(requrl).host;
+      if(!input.vid || !input.vtype) {
+         return;
+      }
+      var vid = input.vid,stream_t = input.vtype;
 
-      console.dir(sogou_headers);
+      var requrl = "http://v.youku.com/player/getPlayList/VideoIDS/" + vid + "/timezone/+08/version/5/source/video?n=3&ran=5061&password=";
+      var p_headers = sogou.new_sogou_proxy_headers(url.parse(requrl).hostname, url.parse(requrl).host);
+      console.dir(p_headers);
       var options = {
          url: requrl,
          proxy: sogou.new_sogou_proxy_addr(),
-         headers: sogou_headers
+         headers: p_headers
       };
+
       var myself = this;
       request(options, function(error, response, body) {
          if (!error && response.statusCode == 200) {
@@ -68,10 +62,11 @@ var Youku = {
             VideoMetaData.vShow = data.show;
             VideoMetaData.vSize = data.streamsizes;
             VideoMetaData.vList = [];
+            VideoMetaData.vType = stream_t;
 
-            var segs = data.segs[myself.stream_t];
-            var fileids = data.streamfileids[myself.stream_t];
-            VideoMetaData.vList = getMediaUrls(fileids, data.seed, segs, myself.stream_t);
+            var segs = data.segs[stream_t];
+            var fileids = data.streamfileids[stream_t];
+            VideoMetaData.vList = getMediaUrls(fileids, data.seed, segs, stream_t);
             // var downloader = require('./downloader.js');
             // downloader.setlist(urls.vList);
             // downloader.start();

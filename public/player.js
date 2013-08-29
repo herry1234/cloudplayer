@@ -1,7 +1,7 @@
 function load() {
    var ul = jQuery('#vlist li');
    var vlist = [];
-   for(var i=0; i < ul.length; i++) {
+   for (var i = 0; i < ul.length; i++) {
       vlist.push(ul[i].innerText);
    }
    console.dir(vlist);
@@ -22,4 +22,19 @@ function load() {
          }
       });
    });
-}
+   $("#update").click(function() {
+      console.log('call me');
+      var data = {
+         vid: $("#vid").text(),
+         type: $('#vtype').text()
+      }
+      console.dir(data);
+      $.ajax({
+         type: "PUT",
+         url: "#",
+         contentType: "application/json",
+         data: JSON.stringify(data)
+      });
+
+   });
+};

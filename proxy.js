@@ -28,6 +28,7 @@ function string_starts_with(str, substr) {
     "use strict";
     return str.slice(0, substr.length) === substr;
 }
+
 function new_sogou_auth_str() {
     "use strict";
     var auth_str = '/30/853edc6d49ba4e27';
@@ -39,6 +40,16 @@ function new_sogou_auth_str() {
     return auth_str;
 }
 
+function new_sogou_proxy_headers(host, hostname) {
+    var timestamp = Math.round(Date.now() / 1000).toString(16);
+    var sogou_headers = {};
+    sogou_headers['X-Sogou-Auth'] = new_sogou_auth_str();;
+    sogou_headers['X-Sogou-Timestamp'] = timestamp;
+    sogou_headers['X-Sogou-Tag'] = compute_sogou_tag(timestamp, hostname);;
+    sogou_headers['X-Forwarded-For'] = new_random_ip();
+    sogou_headers.Host = host;
+    return sogou_headers;
+}
 
 function new_sogou_proxy_addr() {
     "use strict";
@@ -46,28 +57,29 @@ function new_sogou_proxy_addr() {
         '220.181.118.128',
     ];
 
-    var random_num = Math.floor(Math.random() * (16 + 16 + other_ip_addrs.length));  // 0 ~ 15 edu, 0 ~ 15 dxt
+    var random_num = Math.floor(Math.random() * (16 + 16 + other_ip_addrs.length)); // 0 ~ 15 edu, 0 ~ 15 dxt
     var proxy_addr;
 
     if (random_num < 16) {
         if (8 === random_num || 12 === random_num) {
             return new_sogou_proxy_addr(); // just retry
         }
-        proxy_addr = 'h' + random_num + '.dxt.bj.ie.sogou.com';  // 0 ~ 15
+        proxy_addr = 'h' + random_num + '.dxt.bj.ie.sogou.com'; // 0 ~ 15
     } else if (random_num < 16 + 16) {
         random_num -= 16;
-        proxy_addr = 'h' + random_num + '.edu.bj.ie.sogou.com';  // (16 ~ 31) - 16
+        proxy_addr = 'h' + random_num + '.edu.bj.ie.sogou.com'; // (16 ~ 31) - 16
     } else {
         random_num -= 16 + 16;
         proxy_addr = other_ip_addrs[random_num];
     }
-    proxy_addr = 'http://'+proxy_addr;
+    proxy_addr = 'http://' + proxy_addr;
 
     return proxy_addr;
 }
 
 
 // based on http://goo.gl/th215
+
 function compute_sogou_tag(timestamp, target_link) {
     "use strict";
     var hostname;
@@ -81,12 +93,12 @@ function compute_sogou_tag(timestamp, target_link) {
     var numb_iter = Math.floor(total_len / 4);
     var numb_left = total_len % 4;
 
-    var hash = total_len;  // output hash tag
+    var hash = total_len; // output hash tag
 
     var i, low, high;
     for (i = 0; i < numb_iter; i++) {
-        low  = s.charCodeAt(4 * i + 1) * 256 + s.charCodeAt(4 * i);  // right most 16 bits in little-endian
-        high = s.charCodeAt(4 * i + 3) * 256 + s.charCodeAt(4 * i + 2);  // left most
+        low = s.charCodeAt(4 * i + 1) * 256 + s.charCodeAt(4 * i); // right most 16 bits in little-endian
+        high = s.charCodeAt(4 * i + 3) * 256 + s.charCodeAt(4 * i + 2); // left most
 
         hash += low;
         hash %= 0x100000000;
@@ -98,30 +110,30 @@ function compute_sogou_tag(timestamp, target_link) {
     }
 
     switch (numb_left) {
-    case 3:
-        hash += (s.charCodeAt(total_len - 2) << 8) + s.charCodeAt(total_len - 3);
-        hash %= 0x100000000;
-        hash ^= hash << 16;
-        hash ^= s.charCodeAt(total_len - 1) << 18;
-        hash += hash >>> 11;
-        hash %= 0x100000000;
-        break;
-    case 2:
-        hash += (s.charCodeAt(total_len - 1) << 8) + s.charCodeAt(total_len - 2);
-        hash %= 0x100000000;
-        hash ^= hash << 11;
-        hash += hash >>> 17;
-        hash %= 0x100000000;
-        break;
-    case 1:
-        hash += s.charCodeAt(total_len - 1);
-        hash %= 0x100000000;
-        hash ^= hash << 10;
-        hash += hash >>> 1;
-        hash %= 0x100000000;
-        break;
-    default:
-        break;
+        case 3:
+            hash += (s.charCodeAt(total_len - 2) << 8) + s.charCodeAt(total_len - 3);
+            hash %= 0x100000000;
+            hash ^= hash << 16;
+            hash ^= s.charCodeAt(total_len - 1) << 18;
+            hash += hash >>> 11;
+            hash %= 0x100000000;
+            break;
+        case 2:
+            hash += (s.charCodeAt(total_len - 1) << 8) + s.charCodeAt(total_len - 2);
+            hash %= 0x100000000;
+            hash ^= hash << 11;
+            hash += hash >>> 17;
+            hash %= 0x100000000;
+            break;
+        case 1:
+            hash += s.charCodeAt(total_len - 1);
+            hash %= 0x100000000;
+            hash ^= hash << 10;
+            hash += hash >>> 1;
+            hash %= 0x100000000;
+            break;
+        default:
+            break;
     }
 
     hash ^= hash << 3;
@@ -147,5 +159,6 @@ function compute_sogou_tag(timestamp, target_link) {
 var exports = exports || {};
 exports.new_random_ip = new_random_ip;
 exports.new_sogou_auth_str = new_sogou_auth_str;
+exports.new_sogou_proxy_headers = new_sogou_proxy_headers;
 exports.compute_sogou_tag = compute_sogou_tag;
 exports.new_sogou_proxy_addr = new_sogou_proxy_addr;
