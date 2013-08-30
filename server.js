@@ -106,5 +106,5 @@ app.delete('/youku/:id', function(req, res) {
     }
   })
 });
-var videoProvider = new VideoProvider(process.env.MONGO_TV_HOST, process.env.MONGO_TV_PORT);
+var videoProvider = new VideoProvider('ds039778.mongolab.com', 39778);
 app.listen(port, host);
