@@ -1,5 +1,5 @@
 var host = "0.0.0.0";
-var port = 4000;
+var port = process.env.PORT || 4000;
 var express = require("express");
 var app = express();
 var youku = require('./youku.js');
