@@ -1,7 +1,5 @@
 var http = require('http'),
-   util = require('util'),
    url = require('url'),
-   fs = require('fs'),
    request = require('request');
 var sogou = require('./proxy');
 //https://github.com/cscscheng/Raspberry-Pi-NetworkPlayer/blob/master/youku.py

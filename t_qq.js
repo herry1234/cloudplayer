@@ -3,8 +3,7 @@ var querystring = require('querystring'),
   request = require('request');
 var sogou = require('./proxy');
 
-//Provided by User
-//var vid = "t00124j130x";
+
 var vid = "s0012wq3ol1";
 var plid = "";
 var webUrl = "";

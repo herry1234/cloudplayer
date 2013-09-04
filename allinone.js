@@ -5,7 +5,7 @@ var querystring = require('querystring'),
 	path = require('path'),
 	zlib = require('zlib');
 
-var sohu = require('./sohu.js');
+var Sohu = require('./sohu.js');
 var url = 'http://tv.sohu.com/s2013/houseofcards1/';
 var options = {
 	url: url,
@@ -42,11 +42,14 @@ function gunzipHtml(res) {
 		for (var i = 0; i < vid_list.length; i++) {
 			console.log(vid_list[i]);
 		};
+		var testA = [];
+		testA.push(vid_list[0]);
 		//download one each time
-		async.eachLimit(vid_list, 1, getOne, function(err) {
+		async.eachLimit(testA, 1, getOne, function(err) {
 			if (err)
 				console.log(err);
-			console.log("Done");
+			else
+				console.log("Done");
 		});
 
 
@@ -58,11 +61,17 @@ function gunzipHtml(res) {
 gunzipHtml(res);
 
 function getOne(vid, callback) {
+	Sohu.fetchUrl({
+		vid: vid,
+		type: "mp4"
+	}, function(err, data) {
+		if (err) {
+			console.log("failed on vid ");
+			callback(err);
+		} else {
+			console.dir(data);
+			callback();
+		}
 
-	sohu.init({
-		vid: vid
-	});
-	sohu.go(function() {
-		callback();
-	});
+	})
 }
