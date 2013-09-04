@@ -45,8 +45,8 @@ app.post('/video/add*', function(req, res) {
     vtype: req.param('type')
   }, function(err, data) {
     if (err) {
-      console.err('error');
-      res.send("ERR");
+      console.error(err);
+      res.send(503,"ERR:" + err);
     } else {
       videoProvider.add(data, function(error, docs) {
         res.send(docs[0]);

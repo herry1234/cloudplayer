@@ -103,15 +103,19 @@
                 type : "POST",
                 'url': url,
                 'contentType' : 'application/json', 
-
                 data: JSON.stringify({ vid: vid, type: vt }) 
               });
              
               /* Put the results in a div */
               posting.done(function( data ) {
-               console.log("Submitted");
+               console.log("Submit Failed: ",data.responseText);
                var player = $('<a>',{text: 'open player',href: "/youku/"+data._id});
                $( "#status" ).empty().append( player );
+              });
+              posting.fail(function( data ) {
+               console.log("Submitted Failed");
+               console.dir(data);
+               $( "#status" ).text("Fail");
               });
             });
          </script>
