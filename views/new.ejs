@@ -13,9 +13,16 @@
 
             <div class="row">
                 <div class="span8">
+                    <div class="control-group">
+                        <label for="cat" class="control-label">Category:</label>
+                        <div class="controls">
+                            <input type="text" name="cat" value="youku" />
+                            <span class="help-inline"></span>
+                        </div>
+                    </div>
 
                     <div class="control-group">
-                        <label for="id" class="control-label">Youku Vid:</label>
+                        <label for="id" class="control-label">Vid:</label>
 
                         <div class="controls">
                             <input type="text" name="vid" />
@@ -96,21 +103,22 @@
               var $form = $( this ),
                   vid = $form.find( 'input[name="vid"]' ).val(),
                   vt = $form.find( 'input[name="type"]' ).val(),
+                  cat = $form.find( 'input[name="cat"]' ).val(),
                   url = $form.attr( 'action' );
              
               /* Send the data using post */
               var posting = $.ajax({
                 type : "POST",
-                'url': url,
+                'url': "/"+cat+"/add",
                 'contentType' : 'application/json', 
 
-                data: JSON.stringify({ vid: vid, type: vt }) 
+                data: JSON.stringify({ vcat: cat, vid: vid, type: vt }) 
               });
              
               /* Put the results in a div */
               posting.done(function( data ) {
                console.log("Submitted");
-               var player = $('<a>',{text: 'open player',href: "/youku/"+data._id});
+               var player = $('<a>',{text: 'open player',href: "/"+ data.vCat + "/" +data._id});
                $( "#status" ).empty().append( player );
               });
             });
