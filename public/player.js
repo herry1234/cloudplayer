@@ -6,9 +6,11 @@ function load() {
    }
    console.dir(vlist);
    var index = 0;
+
    videojs("my_video").ready(function() {
       console.log("ready");
       var myPlayer = this;
+      myPlayer.src(vlist[0]);
       myPlayer.on("ended", function() {
          console.log("ended");
          index++;
@@ -21,6 +23,10 @@ function load() {
             myPlayer.dispose();
          }
       });
+      myPlayer.on("error", function(err) {
+         console.dir(err);
+      });
+
    });
    $("#update").click(function() {
       console.log('call me');
