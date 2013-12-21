@@ -1,17 +1,17 @@
 <html>
    <head>
-      <link href="http://vjs.zencdn.net/4.1/video-js.css" rel="stylesheet">
-      <script src="http://vjs.zencdn.net/4.1/video.js"></script>
+      <link href="http://vjs.zencdn.net/4.3.0/video-js.css" rel="stylesheet">
+      <script src="http://vjs.zencdn.net/4.3.0/video.js"></script>
       <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-      <script type="text/javascript" src="../player.js"></script>
+      <script type="text/javascript" src="../player/js/player.js"></script>
    </head>
    <body onload="load()">
       <h3><%= vTitle %> </h3>
       <div id="vid" ><%= vIdEncoded %></div>
       <div id="vtype" ><%= vType === undefined ? 'mp4' : vType %></div>
       <div id="vCat" ><%= vCat === undefined ? 'youku' : vCat %></div>
-      <video id="my_video" class="video-js vjs-default-skin" controls autoplay
-      preload="auto" width="800" height="600" poster="../my_video_poster.png"
+      <video id="my_video" class="video-js vjs-default-skin vjs-big-play-centered" controls autoplay
+      preload="auto" width="800" height="600" poster="../player/resource/my_video_poster.png"
       data-setup="{}">
          <source src="" type="video/mp4">
       </video>
