@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+  <head>
+      <meta charset="utf-8">
+      <title>Media Player</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="description" content="">
+      <meta name="author" content="Herry Wang">
+      <link href="../player/css/bootstrap.css" rel="stylesheet">
+      <style>
+         body {
+            padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+         }
+      </style>
+      <link href="../player/css/bootstrap-responsive.css" rel="stylesheet">
+    <script src="../player/lib/popcorn-complete.min.js"></script>
+    <script>
+       // ensure the web page (DOM) has loaded
+      document.addEventListener("DOMContentLoaded", function() {
+        // create our sequence
+        var sequence = Popcorn.sequence(
+          "container-id", [{
+            src: "test/video1.mp4",
+            in : 0,
+            out: 3600
+
+          }, {
+            src: "test/video2.mp4",
+            in : 0,
+            out: 3600
+
+          }, {
+            src: "test/video3.mp4",
+            in : 0,
+            out: 3600
+
+          }]);
+        sequence.listen("play", function() {
+          console.log("The sequence has started playing");
+        });
+        sequence.exec(8, function() {
+          console.log("8 seconds into the sequence");
+        });
+
+        // play popcorn
+        sequence.play();
+
+        // get popcorn object of first video
+        console.log(sequence.eq(0));
+
+      }, false); 
+      </script>
+  </head>
+  <body>
+    <div class="header">Use Popcornjs player</div>
+      <div class="container">
+        <div id="container-id"></div>
+
+        <div id="footnotediv"></div>
+      </div>
+  </body>
+</html>

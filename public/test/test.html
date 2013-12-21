@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta charset="utf-8">
+      <title>Main Page</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="description" content="">
+      <meta name="author" content="Herry Wang">
+      <link href="../../player/css/bootstrap.css" rel="stylesheet">
+      <style>
+         body {
+            padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+         }
+      </style>
+      <link href="../../player/css/bootstrap-responsive.css" rel="stylesheet">
+      <link href="http://vjs.zencdn.net/4.3.0/video-js.css" rel="stylesheet">
+      <script src="http://vjs.zencdn.net/4.3.0/video.js"></script>
+      <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+      <script type="text/javascript" src="../../player/js/player2.js"></script>
+   </head>
+   <body onload="load()">
+      <div class="header">Use N player</div>
+
+      <div class="container">
+
+         <ul id="vlist">
+         
+            <li id="list1" style="display:block">
+               <video id="vid1" class="video-js vjs-default-skin" width="800" height="600" controls >
+                  <source src="video1.mp4" type="video/mp4">
+                  </video>
+            </li>
+            <li id="list2" style="display:none">
+               <video id="vid2" class="video-js vjs-default-skin" width="800" height="600" controls>
+                  <source src="video2.mp4" type="video/mp4">
+               </video>
+            
+            </li>
+            <li id="list3" style="display:none">
+            
+               <video id="vid3" class="video-js vjs-default-skin" width="800" height="600" controls>
+                  <source src="video3.mp4" type="video/mp4">
+               </video>
+         
+            </li>
+         </ul>
+      </div>
+
+
+      
+   </body>
+</html>
+
+
