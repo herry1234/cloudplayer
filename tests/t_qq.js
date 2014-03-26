@@ -1,7 +1,7 @@
 var querystring = require('querystring'),
   url = require('url'),
   request = require('request');
-var sogou = require('./proxy');
+var sogou = require('../lib/util/proxy');
 
 
 var vid = "s0012wq3ol1";

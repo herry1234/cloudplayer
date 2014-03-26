@@ -1,18 +1,16 @@
 //using sohu API. 
-
+//fetch_real_url 
+//in fact, no proxy required.
 var request = require('request'),
    fs = require('fs'),
    url = require('url'),
    path = require('path'),
    async = require('async');
 
-var sogou = require('./proxy');
+var sogou = require('../lib/util/proxy');
 
 //Provided by User
 var vid = "1114447";
-//,
-//1114447,990617
-
 var plid = "";
 var webUrl = "";
 var stream_t = {
@@ -46,10 +44,9 @@ request(options, function(error, response, body) {
          var data = res.data;
          console.log(data.tv_name);
          urls.vTitle = data.tv_name;
-         //console.log(data[stream_t["high"]]);
          getMediaUrls(data[stream_t["high"]], function(err) {
             console.log("trying saving list to file --- err: " + err);
-            if (!err) savetofile(urls);
+            //if (!err) savetofile(urls);
          });
       }
    } else {
@@ -88,7 +85,6 @@ function savetofile(data) {
    }
 
    for (var i = 0; i < lengh_of_list; i++) {
-      //fs.writeSync(fd, data.vList[i]["index"] + data.vList[i]["url"] + "\r\n");
       fs.writeSync(fd, data.vList[i] + "\r\n");
    }
 
@@ -102,8 +98,8 @@ function fetch_real_url(data, callback) {
    console.dir(p_headers);
    var options = {
       url: requrl,
-      proxy: sogou.new_sogou_proxy_addr(),
-      headers: p_headers,
+      //proxy: sogou.new_sogou_proxy_addr(),
+      //headers: p_headers,
       followRedirect: false
    };
    setTimeout(function() {
@@ -115,7 +111,7 @@ function fetch_real_url(data, callback) {
             urls.vList[fname] = url;
             callback(); //sucess
          } else {
-            console.log("Problbem with URL: " + oriUrl + "error " + error + " status " + response.statusCode);
+            console.log("Problbem with URL: " + requrl + "error " + error + " status " + response.statusCode);
             callback("Error on index " + fname);
          }
       });

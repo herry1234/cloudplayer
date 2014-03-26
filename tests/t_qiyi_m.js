@@ -1,15 +1,14 @@
+//MP4 is not working anymore, returns 405 error. How to fix it ?
+//no proxy required. 
+//M3U8 is still good.
+
 var querystring = require('querystring'),
   url = require('url'),
   request = require('request'),
-  sogou = require('./proxy');
+  sogou = require('../lib/util/proxy');
+
 
 //Provided by User
-//var vid = "4c239fe260524abaa20999f866441ee5";
-//var tvid = "497275";
-//var aid = "234453";
-//MP4 is not working anymore
-// M3U8 is still good.
-
 var vid = "b15ff4792a694e07bc6a80b29d0c453f";
 var tvid = "463918";
 var aid = "391603";
@@ -23,7 +22,7 @@ var requrl = 'http://cache.video.qiyi.com/m/' + vid + '/';
 var p_headers = sogou.new_sogou_proxy_headers(url.parse(requrl).hostname, url.parse(requrl).host);
 console.dir(p_headers);
 var options = {
-  url: requrl,
+  url: requrl
   //proxy: sogou.new_sogou_proxy_addr(),
   //headers: p_headers
 };
@@ -61,9 +60,9 @@ function getRealUrl(data) {
   var p_headers = sogou.new_sogou_proxy_headers(url.parse(mediaurl).hostname, url.parse(mediaurl).host);
   console.dir(p_headers);
   var options = {
-    url: mediaurl,
-    // proxy: sogou.new_sogou_proxy_addr(),
-    // headers: p_headers
+    url: mediaurl
+    //proxy: sogou.new_sogou_proxy_addr(),
+    //headers: p_headers
   };
   request(options, function(error, response, body) {
     if (!error && response.statusCode == 200) {

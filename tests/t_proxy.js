@@ -4,7 +4,7 @@ var http = require('http'),
     fs = require('fs'),
     request = require('request');
 var vid = 'XNTk1MjY0MDky';
-var sogou = require('./proxy');
+var sogou = require('../lib/util/proxy');
 
 var requrl = "http://v.youku.com/player/getPlayList/VideoIDS/" + vid + "/timezone/+08/version/5/source/video?n=3&ran=5061&password="
 var p_headers = sogou.new_sogou_proxy_headers(url.parse(requrl).hostname,url.parse(requrl).host);

@@ -3,3 +3,4 @@
 sohuplaylist.txt
 public/test/*.mp4
 tests/*.html
+node_modules/

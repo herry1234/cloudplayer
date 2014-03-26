@@ -1,26 +1,25 @@
+// NOT working anymore. There is one key parameter missing in the request. 
 var querystring = require('querystring'),
-  request = require('request');
-
+  request = require('request'),
+  url = require('url'),
+  sogou = require('../lib/util/proxy');
 //Provided by User
-//var vid = "4c239fe260524abaa20999f866441ee5";
-//var tvid = "497275";
-//var aid = "234453";
-
-
 var vid = "b15ff4792a694e07bc6a80b29d0c453f";
 var tvid = "463918";
 var aid = "391603";
 var plid = "";
 var webUrl = "";
 var stream_t = "mp4";
-var cn_proxy = 'http://60.5.187.109:3128';
-var bid = "2";
+var bid = "2";// video profile ?
 
 //
-var url = 'http://cache.video.qiyi.com/vd/' + tvid + '/' + vid + '/';
+var requrl = 'http://cache.video.qiyi.com/vd/' + tvid + '/' + vid + '/';
+var p_headers = sogou.new_sogou_proxy_headers(url.parse(requrl).hostname, url.parse(requrl).host);
+console.dir(p_headers);
 var options = {
-  url: url,
-  proxy: cn_proxy
+  url: requrl,
+  //proxy: sogou.new_sogou_proxy_addr(),
+  headers: p_headers
 };
 
 var urls = {
@@ -45,8 +44,7 @@ function getMediaUrls(oriUrl) {
 
   var url1 = 'http://data.video.qiyi.com/v.f4v?id=' + aid + '&tvid=' + tvid + '&tn=' + Math.random();
   request({
-    url: url1,
-    proxy: cn_proxy
+    url: url1
   }, function(err, res, body) {
     var res = JSON.parse(body);
     var time = res.time;
@@ -55,19 +53,13 @@ function getMediaUrls(oriUrl) {
     var expire_time = Math.ceil(new Date().getTime() / 1000) + 2374323850;
     getRealUrl(oriUrl, expire_time);
   });
-
-
 }
 
 function getRealUrl(urls, expire_time) {
-
   for (var i = 0; i < urls.length; i++) {
-
-    //var time = "3742155170"; 
     var time = expire_time;
     var url = 'http://data.video.qiyi.com/' + time + '/videos' + urls[i]["l"];
     console.log(url);
-
     request({
       url: url
     }, function(error, response, body) {

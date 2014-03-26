@@ -5,7 +5,7 @@ var querystring = require('querystring'),
 	path = require('path'),
 	zlib = require('zlib');
 
-var Sohu = require('./sohu.js');
+var Sohu = require('../lib/sohu.js');
 var url = 'http://tv.sohu.com/s2013/houseofcards1/';
 var options = {
 	url: url,
