@@ -65,6 +65,21 @@ function getPlaylist() {
 }
 
 function load() {
+   $("#update").click(function() {
+      console.log('call me');
+      var data = {
+         vid: $("#vid").text(),
+         type: $('#vtype').text()
+      }
+      console.dir(data);
+      $.ajax({
+         type: "PUT",
+         url: "#",
+         contentType: "application/json",
+         data: JSON.stringify(data)
+      });
+
+   });
    getPlaylist();
    createHidenNewVideoTag();
    videojs("vjs1").ready(function() {

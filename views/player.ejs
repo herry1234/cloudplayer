@@ -1,38 +1,70 @@
 <html>
    <head>
+      <meta charset="utf-8">
+      <title>Cplayer Main Page</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="description" content="">
+      <meta name="author" content="Herry Wang">
+      <link href="../player/css/bootstrap.css" rel="stylesheet">
+      <link href="../player/css/bootstrap-responsive.css" rel="stylesheet">
       <link href="http://vjs.zencdn.net/4.3.0/video-js.css" rel="stylesheet">
       <script src="http://vjs.zencdn.net/4.3.0/video.js"></script>
-      <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-      <script type="text/javascript" src="../player/js/player.js"></script>
+      <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+      <script type="text/javascript" src="../player/js/player_try2.js"></script>
    </head>
    <body onload="load()">
-      <h3><%= vTitle %> </h3>
-      <div id="vid" ><%= vIdEncoded %></div>
-      <div id="vtype" ><%= vType === undefined ? 'mp4' : vType %></div>
-      <div id="vCat" ><%= vCat === undefined ? 'youku' : vCat %></div>
-      <video id="my_video" class="video-js vjs-default-skin vjs-big-play-centered" controls autoplay
-      preload="auto" width="800" height="600" poster="../player/resource/my_video_poster.png"
-      data-setup="{}">
-         <source src="" type="video/mp4">
-      </video>
-      <input type="button" id="update" name="update" value="update" />
-      <ul id="vlist">
-      <% for(var i = 0; i< vList.length;i++) { %>
-         <li>
-         <%= vList[i] %>
-         </li>
-      <% } %> 
-      </ul>
-      <ul id="Tvlist">
-      <% for(var i = 0; i< vTvList.length;i++) { %>
-         <li>
-         <%= vTvList[i].title %>
-         <%= vTvList[i].vidEncoded %>
-         </li>
-      <% } %> 
-      </ul>
+      <header>
+         <h3><%= vTitle %> </h3>
+      </header>
+      <nav>
+         <ul class="nav nav-tabs">
+            <li class="active"><a href="../youku">Home</a></li>
+            <li><a href="back">Back</a></li>
+            <li><a href="../video/new">New Vid</a></li>
+         </ul>
+      </nav>
+      <aside>
+         
+      </aside>
 
-      
+      <section class="container">
+
+         <section id="content" class="span12">
+            <article>
+               <label id="vid" ><%= vIdEncoded %></label>
+               <label id="vtype" ><%= vType === undefined ? 'mp4' : vType %></label>
+               <label id="vCat" ><%= vCat === undefined ? 'youku' : vCat %></label>
+               <input type="button" id="update" name="update" value="update" />
+            </article>
+
+            <article id="mainvideodiv">
+                  <video id="vjs1" class="video-js vjs-default-skin vjs-big-play-centered" controls
+                  preload="none" poster="../player/resource/my_video_poster.png"
+                  data-setup="{}">
+                  </video>
+            </article>
+               
+            <article id="buttonList" >
+               <ul id="vlist" style="display:none">
+                     <% for(var i = 0; i< vList.length;i++) { %>
+                     <li>
+                     <%= vList[i] %>
+                     </li>
+                     <% } %> 
+               </ul>
+
+               <ul id="Tvlist" style="display:none">
+               <% for(var i = 0; i< vTvList.length;i++) { %>
+                  <li>
+                  <%= vTvList[i].title %>
+               <%= vTvList[i].vidEncoded %>
+                  </li>
+               <% } %> 
+               </ul>
+            </article>
+
+         </section>
+      </section>      
    </body>
 </html>
 
