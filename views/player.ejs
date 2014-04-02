@@ -10,7 +10,7 @@
       <link href="http://vjs.zencdn.net/4.3.0/video-js.css" rel="stylesheet">
       <script src="http://vjs.zencdn.net/4.3.0/video.js"></script>
       <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
-      <script type="text/javascript" src="../player/js/player_try2.js"></script>
+      <script type="text/javascript" src="../player/js/player.js"></script>
    </head>
    <body onload="load()">
       <header>
@@ -30,20 +30,34 @@
       <section class="container">
 
          <section id="content" class="span12">
-            <article>
+            <article id="video_meta" style="display:none">
                <label id="vid" ><%= vIdEncoded %></label>
                <label id="vtype" ><%= vType === undefined ? 'mp4' : vType %></label>
                <label id="vCat" ><%= vCat === undefined ? 'youku' : vCat %></label>
-               <input type="button" id="update" name="update" value="update" />
             </article>
-
-            <article id="mainvideodiv">
-                  <video id="vjs1" class="video-js vjs-default-skin vjs-big-play-centered" controls
-                  preload="none" poster="../player/resource/my_video_poster.png"
-                  data-setup="{}">
-                  </video>
-            </article>
+            <article class="row">
+               <article id="mainvideodiv" class="span2">
+                  
+                     <video id="vjs1" class="video-js vjs-default-skin vjs-big-play-centered" controls
+                     preload="none" poster="../player/resource/my_video_poster.png"
+                     data-setup="{}">
+                     </video>
+               </article>
+               <article class="span2">
+                  <ul id="Tvlist" style="display:none">
+                  <% for(var i = 0; i< vTvList.length;i++) { %>
+                     <li>
+                     <%= vTvList[i].title %>
+                  <%= vTvList[i].vidEncoded %>
+                     </li>
+                  <% } %> 
+                  </ul>
+               </article>
+               <input type="button" id="update" name="update" value="update" class="span4"/>
+               <button id="b_showlist" class="span4">TvList</button>
                
+            </article>
+                  
             <article id="buttonList" >
                <ul id="vlist" style="display:none">
                      <% for(var i = 0; i< vList.length;i++) { %>
@@ -53,14 +67,7 @@
                      <% } %> 
                </ul>
 
-               <ul id="Tvlist" style="display:none">
-               <% for(var i = 0; i< vTvList.length;i++) { %>
-                  <li>
-                  <%= vTvList[i].title %>
-               <%= vTvList[i].vidEncoded %>
-                  </li>
-               <% } %> 
-               </ul>
+
             </article>
 
          </section>
