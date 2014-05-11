@@ -36,14 +36,14 @@
                <label id="vCat" ><%= vCat === undefined ? 'youku' : vCat %></label>
             </article>
             <article class="row">
-               <article id="mainvideodiv" class="span2">
+               <article id="mainvideodiv" class="span4">
                   
                      <video id="vjs1" class="video-js vjs-default-skin vjs-big-play-centered" controls
                      preload="none" poster="../player/resource/my_video_poster.png"
                      data-setup="{}">
                      </video>
                </article>
-               <article class="span2">
+               <article class="span4">
                   <ul id="Tvlist" style="display:none">
                   <% for(var i = 0; i< vTvList.length;i++) { %>
                      <li>
@@ -53,8 +53,8 @@
                   <% } %> 
                   </ul>
                </article>
-               <input type="button" id="update" name="update" value="update" class="span4"/>
-               <button id="b_showlist" class="span4">TvList</button>
+               
+               <button id="b_showlist">TvList</button>
                
             </article>
                   
@@ -66,6 +66,7 @@
                      </li>
                      <% } %> 
                </ul>
+               <input type="button" id="update" name="update" value="update"/>
 
 
             </article>

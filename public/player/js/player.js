@@ -1,4 +1,4 @@
-//Player2.js
+//player.js
 // var currentPlayer;
 // There are two video tag. One is created html file, 
 // Another one is created by js because 'display:none' doesn't for videojs videotag. 
@@ -48,8 +48,8 @@ function getPlaylist() {
    var ul = jQuery('#vlist li');
    var bl = document.getElementById('buttonList');
    for (var i = 0; i < ul.length; i++) {
-      vlist.push(ul[i].innerHTML);
-      console.log("Pushing video: " + ul[i].innerHTML);
+      vlist.push(ul[i].innerText);
+      console.log("Pushing video: " + ul[i].innerText);
       var newButton = document.createElement("input");
       newButton.type = "button";
       newButton.value = i + '';

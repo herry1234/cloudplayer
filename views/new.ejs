@@ -16,8 +16,13 @@
                     <div class="control-group">
                         <label for="cat" class="control-label">Category:</label>
                         <div class="controls">
-                            <input type="text" name="cat" value="youku" />
-                            <span class="help-inline"></span>
+                          <select class="input-small" id="cat" name="cat" value="youku">
+                                <option selected>youku</option>
+                                <option>sohu</option>
+                                <option>qq</option>
+                                <option>letv</option>
+                                <option>other</option>
+                            </select>
                         </div>
                     </div>
 
@@ -61,18 +66,8 @@
 
                         <div class="controls">
                             <select class="input-small" id="year" name="year" value="2013">
-                                <option
-                                selected >2012</option>
-                                <option
-                                >2011</option>
-                                <option
-                                >2010</option>
-                                <option
-                                >2009</option>
-                                <option
-                                >2008</option>
-                                <option
-                                >2007</option>
+                                <option selected >2014</option>
+                                <option>2013</option>
                             </select>
                         </div>
                     </div>
@@ -103,7 +98,7 @@
               var $form = $( this ),
                   vid = $form.find( 'input[name="vid"]' ).val(),
                   vt = $form.find( 'input[name="type"]' ).val(),
-                  cat = $form.find( 'input[name="cat"]' ).val(),
+                  cat = $form.find( 'select[name="cat"]' ).val(),
                   url = $form.attr( 'action' );
              
               /* Send the data using post */
